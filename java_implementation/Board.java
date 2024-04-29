@@ -125,15 +125,38 @@ public abstract class Board {
     CellStatus cellStatus = layout.get(row).get(col);
 
     // if cell is nothing, set it to a miss
-    if (cellStatus == CellStatus.NOTHING) {
+    if (cellStatus == CellStatus.NOTHING_HIT) {
       layout.get(row).set(col, CellStatus.MISS);
-    } else {
-      // if cell is a ship, set it to a hit
-      layout.get(row).set(col, CellStatus.HIT);
+    } else if (cellStatus == CellStatus.AIRCRAFT_CARRIER){
+      layout.get(row).set(col, CellStatus.HIT_AIRCRAFT_CARRIER);
+    } else if (cellStatus == CellStatus.BATTLESHIP){
+      layout.get(row).set(col, CellStatus.HIT_BATTLESHIP);
+    } else if (cellStatus == CellStatus.CRUISER){
+      layout.get(row).set(col, CellStatus.HIT_CRUISER);
+    } else if (cellStatus == CellStatus.SUB){
+      layout.get(row).set(col, CellStatus.HIT_SUB);
+    } else if (cellStatus == CellStatus.DESTROYER){
+      layout.get(row).set(col, CellStatus.HIT_DESTROYER);
     }
+    
+    return cellStatus;
   }
   
-    /**
+
+  // takes move as input at returns if the move is available or not(not sunk or hit)
+  public boolean moveAvailable(Move move) {
+    int row = move.row();
+    int col = move.col();
+    CellStatus cellStatus = layout.get(row).get(col);
+
+    // if cell has not been hit or sunk, return true
+    if (cellStatus == CellStatus.NOTHING || cellStatus == CellStatus.AIRCRAFT_CARRIER || cellStatus == CellStatus.BATTLESHIP || cellStatus == CellStatus.CRUISER || cellStatus == CellStatus.SUB || cellStatus == CellStatus.DESTROYER) {
+      return true;
+    }
+    return false;
+  }
+  
+  /**
   * Take int input and converts to corresponding capital letter from A-J.
   * Uses typecasting to convert int to char.
   */

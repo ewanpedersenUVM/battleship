@@ -1,3 +1,8 @@
+/**
+ * The Fleet class represents a fleet of ships in the Battleship game.
+ * It contains methods to initialize the ships, update the fleet when a ship is hit,
+ * and check if all ships in the fleet have been sunk.
+ */
 public class Fleet {
 
   private Ship battleShip;
@@ -27,22 +32,22 @@ public class Fleet {
   public boolean updateFleet(ShipType shipType) {
     switch (shipType) {
       case ST_BATTLESHIP:
-      return battleShip.hit();
+        return battleShip.hit();
       case ST_AIRCRAFT_CARRIER:
-      return aircraftCarrier.hit();
+        return aircraftCarrier.hit();
       case ST_CRUISER:
-      return cruiser.hit();
+        return cruiser.hit();
       case ST_SUB:
-      return sub.hit();
+        return sub.hit();
       case ST_DESTROYER:
-      return destroyer.hit();
+        return destroyer.hit();
       default:
-      return false;
+        return false;
     }
   }
 
   /**
-   * Returns true if all ships in the fleet have been sunk, false if they have not.
+   * Method to check if the game is over.
    *
    * @return True if all ships in the fleet have been sunk, false if they have not.
    */

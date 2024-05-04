@@ -5,6 +5,7 @@
 public class Game {
     private ComputerBoard computer;
     private UserBoard player;
+    boolean superComputer;
 
     /**
      * constructor for the game class.
@@ -19,8 +20,9 @@ public class Game {
      * makes a move on player board.
      * @return an array of strings representing the result of the move
      */
-    public String[] makePlayerMove() {
-        return player.makeComputerMove();
+    public String makePlayerMove(String move) {
+        Move m = new Move(move);
+        return computer.makePlayerMove(m);
     }
 
     /**
@@ -28,9 +30,12 @@ public class Game {
      * @param move the move to be made
      * @return a string representing the result of the move
      */
-    public String makeComputerMove(String move) {
-        Move m = new Move(move);
-        return computer.makePlayerMove(m);
+    public String[] makeComputerMove() {
+        if (superComputer) {
+            return player.makeAiMove();
+        } else {
+            return player.makeComputerMove();
+        }
     }
 
     /**
@@ -72,5 +77,14 @@ public class Game {
      */
     public UserBoard getPlayerBoard() {
         return player;
+    }
+
+    /**
+     * Set the computer to be a super computer.
+     * 
+     * @param superComputer true if the computer is a super computer, false otherwise
+     */
+    public void setComputer(boolean superComputer) {
+        this.superComputer = superComputer;
     }
 }

@@ -12,6 +12,7 @@ import java.util.Random;
 public class UserBoard extends Board {
   private ArrayList<Move> moves;
   private Random rand;
+  private Ai ai;
 
   /**
    * constructor for the UserBoard class.
@@ -28,6 +29,7 @@ public class UserBoard extends Board {
         moves.add(new Move(i, j));
       }
     }
+    ai = new Ai(getLayout());
   }
 
   /**
@@ -52,30 +54,160 @@ public class UserBoard extends Board {
     } else if (cellStatus == CellStatus.AIRCRAFT_CARRIER_HIT) {
       // if the ship was sunk, return the move and the ship that was sunk
       if (getFleet().updateFleet(ShipType.ST_AIRCRAFT_CARRIER)) {
+        // convert all layout cells with aircraft carrier hit to aircraft carrier sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.AIRCRAFT_CARRIER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.AIRCRAFT_CARRIER_SUNK);
+              }
+          }
+        }
         return new String[] {move.toString(), "You sank my Aircraft Carrier!"};
       }
     } else if (cellStatus == CellStatus.BATTLESHIP_HIT) {
       if (getFleet().updateFleet(ShipType.ST_BATTLESHIP)) {
+        // convert all layout cells with battleship hit to battleship sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.BATTLESHIP_HIT) {
+                  getLayout().get(i).set(j, CellStatus.BATTLESHIP_SUNK);
+              }
+          }
+        }
         return new String[] {move.toString(), "You sank my Battleship!"};
       }
     } else if (cellStatus == CellStatus.CRUISER_HIT) {
       if (getFleet().updateFleet(ShipType.ST_CRUISER)) {
+        // convert all layout cells with cruiser hit to cruiser sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.CRUISER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.CRUISER_SUNK);
+              }
+          }
+        }
         return new String[] {move.toString(), "You sank my Cruiser!"};
       }
     } else if (cellStatus == CellStatus.SUB_HIT) {
       if (getFleet().updateFleet(ShipType.ST_SUB)) {
+        // convert all layout cells with sub hit to sub sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.SUB_HIT) {
+                  getLayout().get(i).set(j, CellStatus.SUB_SUNK);
+              }
+          }
+        }
         return new String[] {move.toString(), "You sank my Sub!"};
       }
     } else if (cellStatus == CellStatus.DESTROYER_HIT) {
       if (getFleet().updateFleet(ShipType.ST_DESTROYER)) {
+        // convert all layout cells with destroyer hit to destroyer sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.DESTROYER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.DESTROYER_SUNK);
+              }
+          }
+        }
+        return new String[] {move.toString(), "You sank my Destroyer!"};
+      }
+    }
+    // this should be reached only if the move was a hit, but no ship was sunk, or if something went wrong
+    // if nothing was sunk, return the move and null
+    return new String[] {move.toString(), null};
+  }
+
+    /** 
+   * FOR BATTLESHIP AI
+   * makes a move on the computer board, but uses the AI class to predict the next move instead of randomly selecting one.
+   * 
+   * @return an array of two Strings. The first is the move the computer made in user readable form.
+   *        The second is either null, or, if the move resulted in a ship being sunk,
+   *       a string indicating the sunk ship.
+   */
+  public String[] makeAiMove() {
+    // gets move from AI class and passes the current layout
+    Move move = ai.makeMoveFromMain(getLayout());
+
+    //uses the move and updates the layout
+    CellStatus cellStatus = applyMoveToLayout(move);
+
+    // if the move was a hit, check if ship was sunk, updateFleet returns true if ship was sunk
+    if (cellStatus == CellStatus.NOTHING_HIT) {
+      // since nothing was hit, return the move and null
+      return new String[] {move.toString(), null};
+    } else if (cellStatus == CellStatus.AIRCRAFT_CARRIER_HIT) {
+      // if the ship was sunk, return the move and the ship that was sunk
+      if (getFleet().updateFleet(ShipType.ST_AIRCRAFT_CARRIER)) {
+        // convert all layout cells with aircraft carrier hit to aircraft carrier sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.AIRCRAFT_CARRIER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.AIRCRAFT_CARRIER_SUNK);
+              }
+          }
+        }
+        return new String[] {move.toString(), "You sank my Aircraft Carrier!"};
+      }
+    } else if (cellStatus == CellStatus.BATTLESHIP_HIT) {
+      if (getFleet().updateFleet(ShipType.ST_BATTLESHIP)) {
+        // convert all layout cells with battleship hit to battleship sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.BATTLESHIP_HIT) {
+                  getLayout().get(i).set(j, CellStatus.BATTLESHIP_SUNK);
+              }
+          }
+        }
+        return new String[] {move.toString(), "You sank my Battleship!"};
+      }
+    } else if (cellStatus == CellStatus.CRUISER_HIT) {
+      if (getFleet().updateFleet(ShipType.ST_CRUISER)) {
+        // convert all layout cells with cruiser hit to cruiser sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.CRUISER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.CRUISER_SUNK);
+              }
+          }
+        }
+        return new String[] {move.toString(), "You sank my Cruiser!"};
+      }
+    } else if (cellStatus == CellStatus.SUB_HIT) {
+      if (getFleet().updateFleet(ShipType.ST_SUB)) {
+        // convert all layout cells with sub hit to sub sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.SUB_HIT) {
+                  getLayout().get(i).set(j, CellStatus.SUB_SUNK);
+              }
+          }
+        }
+        return new String[] {move.toString(), "You sank my Sub!"};
+      }
+    } else if (cellStatus == CellStatus.DESTROYER_HIT) {
+      if (getFleet().updateFleet(ShipType.ST_DESTROYER)) {
+        // convert all layout cells with destroyer hit to destroyer sunk
+        for (int i = 0; i < getLayout().size(); i++) {
+          for (int j = 0; j < getLayout().get(i).size(); j++) {
+              if (getLayout().get(i).get(j) == CellStatus.DESTROYER_HIT) {
+                  getLayout().get(i).set(j, CellStatus.DESTROYER_SUNK);
+              }
+          }
+        }
         return new String[] {move.toString(), "You sank my Destroyer!"};
       }
     }
 
-    // if nothing was sunk, return the move and null
     // this should be reached only if the move was a hit, but no ship was sunk, or if something went wrong
+    // if nothing was sunk, return the move and null
     return new String[] {move.toString(), null};
   }
+
+    
+    
+
 
   /**
    * Picks a random move from the list, removes it from the list, and then returns it.
